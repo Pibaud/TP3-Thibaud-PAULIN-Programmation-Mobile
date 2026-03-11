@@ -3,10 +3,10 @@ package com.example.basededonnees
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity() { // Hériter de AppCompatActivity
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main) // Assurez-vous que le nom du layout est correct
+        setContentView(R.layout.main)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
