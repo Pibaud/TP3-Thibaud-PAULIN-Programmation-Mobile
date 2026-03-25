@@ -10,11 +10,11 @@ import android.widget.Button
 
 class FragmentAffichage : Fragment() {
 
-    private lateinit var dbHelper: DBHelper
+    private lateinit var db: MaBaseOpenHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_affichage, container, false)
-        dbHelper = DBHelper(requireContext())
+        db = MaBaseOpenHelper(requireContext())
 
         val tvSummary = view.findViewById<TextView>(R.id.tvSummary)
 
@@ -35,26 +35,24 @@ class FragmentAffichage : Fragment() {
     }
 
     private fun displayUserData(id: Long, textView: TextView) {
-        val db = dbHelper.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM ${DBHelper.TABLE_USERS} WHERE ${DBHelper.COLUMN_ID} = ?", arrayOf(id.toString()))
+        val db = db.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM ${MaBaseOpenHelper.TABLE_USERS} WHERE ${MaBaseOpenHelper.COLUMN_ID} = ?", arrayOf(id.toString()))
 
         if (cursor.moveToFirst()) {
-            val login = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_LOGIN))
-            val nom = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_NOM))
-            val prenom = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_PRENOM))
-            val email = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_EMAIL))
-            val interests = cursor.getString(cursor.getColumnIndexOrThrow(DBHelper.COLUMN_INTERESTS))
+            val login = cursor.getString(cursor.getColumnIndexOrThrow(MaBaseOpenHelper.COLUMN_LOGIN))
+            val nom = cursor.getString(cursor.getColumnIndexOrThrow(MaBaseOpenHelper.COLUMN_NOM))
+            val prenom = cursor.getString(cursor.getColumnIndexOrThrow(MaBaseOpenHelper.COLUMN_PRENOM))
+            val email = cursor.getString(cursor.getColumnIndexOrThrow(MaBaseOpenHelper.COLUMN_EMAIL))
+            val interests = cursor.getString(cursor.getColumnIndexOrThrow(MaBaseOpenHelper.COLUMN_INTERETS))
 
             val summary = """
-                ** SYNTHÈSE DE L'INSCRIPTION **
+                SYNTHÈSE DE L'INSCRIPTION
                 
                 Login : $login
                 Nom : $nom
                 Prénom : $prenom
                 Email : $email
                 Centres d'intérêt : $interests
-                
-                Données sauvegardées avec succès !
             """.trimIndent()
 
             textView.text = summary

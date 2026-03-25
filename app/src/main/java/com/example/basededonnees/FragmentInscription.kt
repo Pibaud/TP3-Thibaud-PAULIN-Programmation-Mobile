@@ -12,12 +12,12 @@ import androidx.fragment.app.Fragment
 
 class FragmentInscription : Fragment() {
 
-    private lateinit var dbHelper: DBHelper
+    private lateinit var db: MaBaseOpenHelper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_inscription, container, false)
 
-        dbHelper = DBHelper(requireContext())
+        db = MaBaseOpenHelper(requireContext())
 
         val etLogin = view.findViewById<EditText>(R.id.etLogin)
         val etPassword = view.findViewById<EditText>(R.id.etPassword)
@@ -34,27 +34,37 @@ class FragmentInscription : Fragment() {
         val btnSubmit = view.findViewById<Button>(R.id.btnSubmit)
 
         btnSubmit.setOnClickListener {
-            // 1. Récupération des centres d'intérêt
+            val login = etLogin.text.toString().trim()
+            val pass = etPassword.text.toString()
+
+            if (!login.matches(Regex("^[a-zA-Z].*"))) {
+                Toast.makeText(requireContext(), "Le login doit commencer par une lettre", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (login.length > 10) {
+                Toast.makeText(requireContext(), "Le login ne doit pas dépasser 10 caractères", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (pass.length < 6) {
+                Toast.makeText(requireContext(), "Le mot de passe doit faire au moins 6 caractères", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (db.checkUserExists(login)) {
+                Toast.makeText(requireContext(), "Ce login est déjà utilisé", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val interests = mutableListOf<String>()
             if (cbSport.isChecked) interests.add("Sport")
             if (cbMusic.isChecked) interests.add("Musique")
             if (cbLecture.isChecked) interests.add("Lecture")
             val interestsString = interests.joinToString(", ")
 
-            // 2. Sauvegarde dans la base de données
-            val insertedId = dbHelper.insertUser(
-                etLogin.text.toString(),
-                etPassword.text.toString(),
-                etNom.text.toString(),
-                etPrenom.text.toString(),
-                etDob.text.toString(),
-                etPhone.text.toString(),
-                etEmail.text.toString(),
-                interestsString
-            )
+            val insertedId = db.insertUser(login, pass, etNom.text.toString(), etPrenom.text.toString(), etDob.text.toString(), etPhone.text.toString(), etEmail.text.toString(), interestsString)
 
             if (insertedId > -1) {
-                // 3. Passage au Fragment 2 avec l'ID de l'utilisateur
                 val fragment2 = FragmentAffichage()
                 val bundle = Bundle()
                 bundle.putLong("USER_ID", insertedId)
@@ -68,7 +78,6 @@ class FragmentInscription : Fragment() {
                 Toast.makeText(requireContext(), "Erreur lors de l'enregistrement", Toast.LENGTH_SHORT).show()
             }
         }
-
         return view
     }
 }

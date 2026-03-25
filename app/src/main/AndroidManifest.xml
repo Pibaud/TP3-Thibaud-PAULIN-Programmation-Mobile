@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeActivity"
             android:exported="true"
             android:theme="@style/Theme.BaseDeDonnees">
             <intent-filter>
@@ -22,6 +22,15 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.BaseDeDonnees"/>
+
+        <activity android:name=".LoginActivity"
+            android:theme="@style/Theme.BaseDeDonnees"/>
+        <activity android:name=".PlanningActivity"
+            android:theme="@style/Theme.BaseDeDonnees"/>
+        <activity android:name=".PlanningSyntheseActivity"
+            android:theme="@style/Theme.BaseDeDonnees"/>
 
     </application>
 
